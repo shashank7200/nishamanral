@@ -11,10 +11,11 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
+      --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.13'/%3E%3C/svg%3E");
       --blue: #0060CE;
       --yellow: #FFEF28;
       --card-radius: 30px;
-      --gap: 70px;
+      --gap: 120px; /* slide gap: keeps neighbours ≥80px outside the viewport when a slide is centred */
     }
 
     body {
@@ -34,7 +35,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 0.75rem 2.5rem;
-      margin: 40px 40px 0 40px;
+      margin: 40px 80px 0 80px;
       border-radius: 16px;
     }
 
@@ -53,17 +54,6 @@
       font-size: 0.82rem;
       letter-spacing: 0.06em;
       color: #111;
-      text-decoration: none;
-      font-family: Arial, sans-serif;
-    }
-
-    .top-nav .btn-contact {
-      background: var(--blue);
-      color: #fff;
-      font-size: 0.82rem;
-      letter-spacing: 0.06em;
-      padding: 0.45rem 1.4rem;
-      border-radius: 999px;
       text-decoration: none;
       font-family: Arial, sans-serif;
     }
@@ -94,7 +84,7 @@
        PAGE WRAPPER (adds side margins)
     ══════════════════════════════════════════ */
     .page-wrap {
-      padding: 40px 40px;
+      padding: 40px 80px 0px 80px;
       display: flex;
       flex-direction: column;
       gap: var(--gap);
@@ -117,8 +107,9 @@
 
     .hero {
       position: sticky;
-      top: 48px; /* height of top-nav */
-      height: calc(100vh - 48px);
+      top: calc(130px); /* (100vh − hero height) / 2 — centred while pinned */
+      height: calc(100vh - 155px); /* 80 top + nav + 80 gap + 80 bottom fully visible at load */
+      min-height: 480px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -127,13 +118,18 @@
       border-radius: var(--card-radius);
     }
 
-    /* Yellow flood from bottom */
+    /* Yellow flood from bottom — translucent wash above the character */
     .bg-yellow {
       position: absolute;
       bottom: 0; left: 0; right: 0;
       height: 0%;
-      background: linear-gradient(to top, var(--yellow) 0%, var(--yellow) 60%, rgba(255,239,40,0) 100%);
-      z-index: 1;
+      background: linear-gradient(to top,
+        rgba(255, 239, 40, 0.68) 0%,
+        rgba(255, 239, 40, 0.42) 35%,
+        rgba(255, 239, 40, 0.14) 70%,
+        rgba(255, 239, 40, 0) 100%);
+      z-index: 12;
+      pointer-events: none;
       will-change: height;
       border-radius: 0 0 calc(var(--card-radius) - 2px) calc(var(--card-radius) - 2px);
     }
@@ -149,27 +145,27 @@
       overflow: hidden;
     }
 
-    /* PORTFOLIO text — positioned at ~55% from top */
-    .port-text, .folio-text {
-      font-size: clamp(4rem, 8.5vw, 8.5rem);
-      font-weight: 900;
-      text-transform: uppercase;
-      line-height: 1;
-      letter-spacing: 0.02em;
-      color: var(--blue);
-      flex-shrink: 0;
+    /* PORTFOLIO wordmark — spans the stage behind the character.
+       The gap in the artwork sits at 46.8% of its width (left of centre),
+       so the translateX bias aligns the gap with the centred character. */
+    .portfolio-word {
+      position: absolute;
+      left: 50%;
+      top: 44%;
+      width: min(75%, 1100px);
+      transform: translateX(-46.8%);
+      z-index: 3;
       user-select: none;
+      pointer-events: none;
       will-change: opacity;
-      margin-top: -7vh;
     }
 
     /* Character — head gap at top, body clips at bottom */
     .char-wrap {
       position: relative;
       flex-shrink: 0;
-      width: clamp(260px, 26vw, 380px);
+      width: clamp(280px, 26vw, 450px);
       align-self: flex-start;
-      margin-top: 3vh;
       z-index: 10;
     }
 
@@ -188,8 +184,8 @@
     /* 2025 badge — left of the face, tucked behind the nose */
     .badge {
       position: absolute;
-      top: 24vh;
-      left: -6%;
+      top: 27vh;
+      left: 0%;
       background: var(--yellow);
       color: var(--blue);
       font-size: clamp(1rem, 1.5vw, 1.4rem);
@@ -201,13 +197,13 @@
       will-change: opacity;
     }
 
-    /* Yellow accent rect — floating behind the shoulder */
+    /* Yellow accent rect — below the wordmark, behind the shoulder */
     .yellow-accent {
       position: absolute;
-      left: 45%;
-      top: 47%;
-      width: 30%;
-      height: 11%;
+      left: 54%;
+      top: 64%;
+      width: 21%;
+      height: 15%;
       background: var(--yellow);
       z-index: 4;
     }
@@ -248,23 +244,32 @@
       color: var(--blue);
       cursor: pointer;
       font-family: Arial, sans-serif;
-      transition: transform 0.18s ease;
+      transition: transform 0.18s ease, background 0.18s ease;
     }
 
-    .service-card:hover { transform: translateY(-4px); }
+    .service-card:hover { transform: translateY(-4px); background: #fff; }
 
     /* ══════════════════════════════════════════
        SECTION 2 — ABOUT (second-section.svg)
     ══════════════════════════════════════════ */
     .about-section {
-      position: relative;
+      display: flex;
+      justify-content: center;
+      max-height: calc(100vh - 101px);
       container-type: inline-size;
     }
 
+    .about-inner {
+      position: relative;
+      width: fit-content;
+      margin: 0 auto;
+    }
+
     .about-section img {
-      width: 100%;
-      height: auto;
       display: block;
+      max-width: 100%;
+      width: auto;
+      height: auto;
     }
 
     /* Rotating word — patches over the grey "Conceptualize" baked into the SVG */
@@ -308,6 +313,10 @@
     .work-section {
       border: 1.3px solid var(--blue);
       overflow: hidden;
+      height: calc(100vh - 160px);
+      min-height: 560px;
+      display: flex;
+      flex-direction: column;
     }
 
     /* Blue banner header */
@@ -328,9 +337,12 @@
     /* White body holding the pills */
     .work-body {
       background: #fff;
-      padding: 4rem 4rem 5rem;
+      padding: 2rem 4rem;
+      flex: 1;
+      min-height: 0;
       display: flex;
       justify-content: center;
+      align-items: center;
     }
 
     .work-grid {
@@ -338,8 +350,9 @@
       gap: 1.4rem;
       width: 100%;
       max-width: 880px;
-      /* row height matches the pill proportions from the Work.svg reference (158:398) */
-      height: clamp(280px, 40vw, 505px);
+      /* row height matches the pill proportions from the Work.svg reference (158:398),
+         capped so the bordered card never overflows the slide */
+      height: min(clamp(280px, 40vw, 505px), 100%);
     }
 
     /* Tall pill cards — outline only; hovered card expands like an accordion */
@@ -476,8 +489,8 @@
 
     .process-section {
       position: sticky;
-      top: 48px;
-      height: calc(100vh - 48px);
+      top: 80px;
+      height: calc(100vh - 160px); /* centred slide with 80px space all round */
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -541,7 +554,7 @@
       display: grid;
       grid-template-columns: 1fr 2.6fr;
       gap: 3px;
-      min-height: 100vh;
+      min-height: calc(100vh - 120px);
     }
 
     .services-label {
@@ -575,22 +588,8 @@
       overflow: hidden;
       padding: 2rem 3rem;
       color: #fff;
-      transition:
-        flex-grow 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-        opacity 0.6s ease var(--reveal-delay, 0s),
-        transform 0.6s ease var(--reveal-delay, 0s);
-      opacity: 0;
-      transform: translateY(24px);
+      transition: flex-grow 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
-    .services-row.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .services-row:nth-child(2) { --reveal-delay: 0.1s; }
-    .services-row:nth-child(3) { --reveal-delay: 0.2s; }
-    .services-row:nth-child(4) { --reveal-delay: 0.3s; }
 
     .services-row:hover { flex-grow: 3.2; }
 
@@ -647,7 +646,7 @@
     .quote-section {
       background: var(--yellow);
       border: 1.3px solid var(--blue);
-      min-height: 80vh;
+      height: calc(100vh - 160px);
       display: flex;
     }
 
@@ -657,24 +656,26 @@
       font-weight: 900;
       line-height: 1.25;
       margin: 22vh 0 0 26%;
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
     }
 
-    .quote-text.visible {
-      opacity: 1;
-      transform: translateY(0);
+    .quote-q { display: inline-grid; color: #fff; }
+
+    .quote-q > span {
+      grid-area: 1 / 1;
+      transition: opacity 0.3s ease;
     }
 
-    .quote-q { color: #fff; }
+    .quote-q .q-word { color: var(--blue); opacity: 0; }
+    .quote-q:hover .q-mark { opacity: 0; }
+    .quote-q:hover .q-word { opacity: 1; }
 
     /* ══════════════════════════════════════════
        SECTION 7 — LET'S WORK TOGETHER (footer)
     ══════════════════════════════════════════ */
     .contact-section {
       background: var(--blue);
-      min-height: 85vh;
+      min-height: 100vh; /* final snap shows only the footer — no slide above peeks in */
+      margin-top: 80px;  /* keeps the footer edge from touching the quote slide's viewport */
       display: flex;
       flex-direction: column;
       padding-top: 6rem;
@@ -802,6 +803,7 @@
     .page-slot > img,
     .flip-face img {
       position: absolute;
+      object-fit: cover;
       inset: 0;
       width: 100%;
       height: 100%;
@@ -904,8 +906,9 @@
       background: #111;
       border-radius: 22px;
       overflow: hidden;
-      /* 1.482 = carousel ratio (693/925) + review ratio (1407/1920) */
-      height: min(calc(100vh - 160px), calc((100vw - 160px) / 1.482));
+      /* 1.482 = carousel ratio (693/925) + review ratio (1407/1920);
+         width budget leaves room for the flanking nav arrows */
+      height: min(calc(100vh - 160px), calc((100vw - 300px) / 1.482));
       box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6);
       transform: scale(0.94);
       transition: transform 0.3s ease;
@@ -959,6 +962,16 @@
     .social-next { right: 14px; }
     .social-nav.hidden { opacity: 0; pointer-events: none; }
 
+    /* Social modal: arrows sit outside the post frame, flanking it on the backdrop */
+    .social-modal { gap: 22px; }
+
+    .social-modal .social-nav {
+      position: static;
+      transform: none;
+      flex-shrink: 0;
+      background: rgba(30, 30, 30, 0.75);
+    }
+
     .social-review {
       height: 100%;
       aspect-ratio: 1407 / 1920;
@@ -989,10 +1002,13 @@
 
     .social-close:hover { transform: scale(1.08); }
 
-    /* Brand book — wide slide carousel, no side panel */
+    /* Brand book — wide slide carousel, no side panel.
+       Aspect is 38px narrower per side than the 1088×552 artwork so the
+       chevron circles baked into the slide SVGs are cropped out of view
+       (slides are object-fit: cover). */
     .brand-frame {
-      width: min(calc(100vw - 160px), calc((100vh - 160px) * 1.971));
-      aspect-ratio: 1088 / 552;
+      width: min(calc(100vw - 300px), calc((100vh - 160px) * 1.833));
+      aspect-ratio: 1012 / 552;
       background: #111;
       border-radius: 22px;
       overflow: hidden;
@@ -1009,19 +1025,15 @@
       aspect-ratio: auto;
     }
 
-    /* Brand slides have arrow icons drawn into the artwork —
-       overlay transparent hit-areas on them instead of our own visuals */
-    .brand-modal .social-nav {
-      background: transparent;
-      color: transparent;
-      width: 3.5%;
-      aspect-ratio: 1;
-      height: auto;
-    }
+    /* Brand modal: arrows sit outside the frame, flanking it on the backdrop */
+    .brand-modal { gap: 22px; }
 
-    .brand-modal .social-nav:hover { background: rgba(255, 255, 255, 0.15); }
-    .brand-modal .social-prev { left: 0.9%; }
-    .brand-modal .social-next { right: 0.6%; }
+    .brand-modal .social-nav {
+      position: static;
+      transform: none;
+      flex-shrink: 0;
+      background: rgba(30, 30, 30, 0.75);
+    }
 
     /* Close + nav UI */
     .menu-close {
@@ -1076,8 +1088,16 @@
     }
 
     @media (max-width: 700px) {
+      .top-nav { margin: 16px 16px 0; }
+      .page-wrap { padding: 16px 16px; }
+      .hero { height: calc(100vh - 130px); }
+      .work-section { height: auto; min-height: 0; display: block; }
+      .about-section, .about-section img { max-height: none; }
+      .quote-section { height: auto; min-height: 70vh; }
       .char-wrap { width: 190px; margin-top: -70px; }
-      .port-text, .folio-text { font-size: 13vw; }
+      .portfolio-word { width: 94%; top: 22%; }
+      .badge { top: 14vh; }
+      .yellow-accent { top: 30%; left: 55%; width: 26%; height: 5%; }
       .cards-grid { grid-template-columns: repeat(2, 1fr); }
       /* Accordion hover doesn't suit touch — back to a 2×2 grid */
       .work-grid {
@@ -1113,13 +1133,38 @@
       }
       .social-carousel { width: 100%; height: auto; aspect-ratio: 693 / 925; }
       .social-review   { width: 100%; height: auto; aspect-ratio: 1407 / 1920; }
+      /* No room beside the post on phones — overlay the arrows again */
+      .social-modal, .brand-modal { gap: 0; }
+      .social-modal .social-nav, .brand-modal .social-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 5;
+      }
+      .social-modal .social-prev, .brand-modal .social-prev { left: 8px; }
+      .social-modal .social-next, .brand-modal .social-next { right: 8px; }
       .social-close { top: 12px; right: 12px; }
       .brand-frame { width: calc(100vw - 32px); }
       .brand-modal .social-carousel { aspect-ratio: auto; height: 100%; }
     }
+    /* Film-grain: behind all content, above the page background */
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background-image: var(--noise);
+    }
+
+    /* Noise texture on solid surfaces (never on creatives) */
+    .top-nav, .hero, .work-banner, .work-body, .service-card, .services-label, .services-row, .quote-section, .contact-section {
+      background-image: var(--noise);
+    }
   </style>
 </head>
 <body>
+
+<div class="grain" aria-hidden="true"></div>
 
 <!-- ═══════════════════════════════════════════
      TOP NAV (yellow, outside hero)
@@ -1127,8 +1172,8 @@
 <nav class="top-nav">
   <a class="logo" href="#"><img src="logo.svg" alt="Logo" /></a>
   <div class="nav-links">
-    <a href="#">About</a>
-    <a href="#">Work</a>
+    <a href="#aboutSection">About</a>
+    <a href="./oichi.html">Work</a>
     <a href="#" class="btn-contact">Contact</a>
   </div>
 </nav>
@@ -1147,15 +1192,13 @@
       <div class="hero-stage">
         <div class="yellow-accent"></div>
 
-        <span class="port-text" id="portText">PORT</span>
+        <img class="portfolio-word" id="portfolioWord" src="PORT-FOLIO.svg" alt="Portfolio" />
 
         <div class="char-wrap">
           <img src="side-profile.svg"   class="char-img-1" id="charImg1" alt="Nisha" />
           <img src="side-profile-2.svg" class="char-img-2" id="charImg2" alt="Nisha scrolled" />
           <div class="badge" id="badge2025">2025</div>
         </div>
-
-        <span class="folio-text" id="folioText">FOLIO</span>
       </div>
 
       <div class="cards-overlay" id="cardsOverlay">
@@ -1172,6 +1215,7 @@
 
   <!-- ── ABOUT ── -->
   <div class="card-shell about-section" id="aboutSection">
+    <div class="about-inner">
     <img src="second-section.svg" alt="About Nisha" />
     <div class="rotate-word-wrap" aria-hidden="true">
       <div class="rotate-word-inner">
@@ -1181,6 +1225,7 @@
         <span>Visualise</span>
         <span>Conceptualize</span>
       </div>
+    </div>
     </div>
   </div>
 
@@ -1331,7 +1376,7 @@
 
   <!-- ── QUOTE ── -->
   <section class="quote-section" id="quoteSection">
-    <p class="quote-text">I design for the moment<br>things start to make <span class="quote-q">?</span></p>
+    <p class="quote-text">I design for the moment<br>things start to make <span class="quote-q"><span class="q-mark">?</span><span class="q-word" aria-hidden="true">sense</span></span></p>
   </section>
 
 </div><!-- /page-wrap -->
@@ -1431,27 +1476,27 @@
 
 <div class="book-modal social-modal" id="socialModal" role="dialog" aria-modal="true" aria-label="Instagram post">
   <button class="social-close" aria-label="Close post">&#10005;</button>
+  <button class="social-nav social-prev" id="socialPrev" aria-label="Previous image">&#8249;</button>
   <div class="social-post">
     <div class="social-carousel">
       <div class="social-track" id="socialTrack"></div>
-      <button class="social-nav social-prev" id="socialPrev" aria-label="Previous image">&#8249;</button>
-      <button class="social-nav social-next" id="socialNext" aria-label="Next image">&#8250;</button>
     </div>
     <div class="social-review">
       <img src="social-media/review.png" alt="Instagram review of OICHII The Ramen Bar" />
     </div>
   </div>
+  <button class="social-nav social-next" id="socialNext" aria-label="Next image">&#8250;</button>
 </div>
 
 <div class="book-modal brand-modal" id="brandModal" role="dialog" aria-modal="true" aria-label="Brand book slides">
   <button class="social-close" aria-label="Close brand book">&#10005;</button>
+  <button class="social-nav social-prev" aria-label="Previous slide">&#8249;</button>
   <div class="brand-frame">
     <div class="social-carousel">
       <div class="social-track"></div>
-      <button class="social-nav social-prev" aria-label="Previous slide">&#8249;</button>
-      <button class="social-nav social-next" aria-label="Next slide">&#8250;</button>
     </div>
   </div>
+  <button class="social-nav social-next" aria-label="Next slide">&#8250;</button>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1459,8 +1504,7 @@
 ═══════════════════════════════════════════ -->
 <script>
   const bgYellow      = document.getElementById('bgYellow');
-  const portText      = document.getElementById('portText');
-  const folioText     = document.getElementById('folioText');
+  const portfolioWord = document.getElementById('portfolioWord');
   const charImg1      = document.getElementById('charImg1');
   const charImg2      = document.getElementById('charImg2');
   const badge2025     = document.getElementById('badge2025');
@@ -1485,11 +1529,10 @@
     const viewH = window.innerHeight;
     const p     = clamp(window.scrollY / viewH, 0, 1);
 
-    bgYellow.style.height = (easeInOut(prog(p, 0.05, 0.85)) * 85) + '%';
+    bgYellow.style.height = (easeInOut(prog(p, 0.05, 0.85)) * 60) + '%';
 
     const tOp = 1 - easeInOut(prog(p, 0.1, 0.7)) * 0.82;
-    portText.style.opacity  = tOp;
-    folioText.style.opacity = tOp;
+    portfolioWord.style.opacity = tOp;
 
     badge2025.style.opacity = 1 - easeInOut(prog(p, 0.05, 0.5)) * 0.8;
 
@@ -1532,16 +1575,16 @@
     return [
       0,                                              // Hero state 1
       viewH,                                          // Hero state 2 (animated)
-      aboutSection.getBoundingClientRect().top + window.scrollY, // About
-      workSection.getBoundingClientRect().top + window.scrollY,  // Work
+      aboutSection.getBoundingClientRect().top + window.scrollY - 80, // About
+      workSection.getBoundingClientRect().top + window.scrollY - 80,  // Work
     ].concat(
       // Process: 4 stops, one per step reveal
       [0, 1, 2, 3].map(i =>
-        processScrollContainer.getBoundingClientRect().top + window.scrollY + i * viewH
+        processScrollContainer.getBoundingClientRect().top + window.scrollY - 80 + i * viewH
       )
     ).concat([
-      Math.min(servicesSection.getBoundingClientRect().top + window.scrollY - 20, maxScroll),
-      Math.min(quoteSection.getBoundingClientRect().top + window.scrollY - 20, maxScroll),
+      Math.min(servicesSection.getBoundingClientRect().top + window.scrollY - 80, maxScroll),
+      Math.min(quoteSection.getBoundingClientRect().top + window.scrollY - 80, maxScroll),
       maxScroll, // Contact footer — bottom of page
     ]);
   }
@@ -1631,22 +1674,6 @@
     currentSnap = findClosestSnap(positions, window.scrollY);
     snapTo(currentSnap + direction);
   });
-
-  /* ── Staggered reveal for services rows + quote text ── */
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      if (entry.target === servicesSection) {
-        servicesSection.querySelectorAll('.services-row').forEach(r => r.classList.add('visible'));
-      } else {
-        entry.target.querySelector('.quote-text').classList.add('visible');
-      }
-      revealObserver.unobserve(entry.target);
-    });
-  }, { threshold: 0.3 });
-
-  revealObserver.observe(servicesSection);
-  revealObserver.observe(quoteSection);
 
   /* ══════════════════════════════════════════
      FLIPBOOKS (menu + photography)

@@ -11,6 +11,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
+      --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.13'/%3E%3C/svg%3E");
       --blue:   #0060CE;
       --yellow: #FFEF28;
       --dark:   #202020;
@@ -26,16 +27,6 @@
     }
 
     img { display: block; }
-
-    /* Film-grain overlay over the whole page (design uses a Figma noise filter) */
-    .grain {
-      position: fixed;
-      inset: 0;
-      z-index: 2000;
-      pointer-events: none;
-      opacity: 0.11;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    }
 
     /* ══════════════════════════════════════════
        TOP NAV — same yellow bar as home page
@@ -66,13 +57,6 @@
       text-decoration: none;
     }
 
-    .top-nav .btn-contact {
-      background: var(--blue);
-      color: #fff;
-      padding: 0.45rem 1.4rem;
-      border-radius: 999px;
-    }
-
     /* ══════════════════════════════════════════
        LAYOUT HELPERS
     ══════════════════════════════════════════ */
@@ -81,14 +65,6 @@
       max-width: 1376px;
       margin-inline: auto;
     }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(26px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
-    }
-
-    .reveal.visible { opacity: 1; transform: translateY(0); }
 
     /* ══════════════════════════════════════════
        HERO — wallet on circuit board
@@ -225,14 +201,14 @@
 
     .social-card .social-text p { margin-top: 2.2rem; }
 
-    /* ── Photography card ── */
+    /* ── Photography card — inline flipbook (same pattern as oichi menu card) ── */
     .photo-card-section {
       margin-top: 70px;
       aspect-ratio: 1376 / 704;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 3% 8.5% 3% 12%;
+      padding: 3% 6% 3% 8%;
     }
 
     .photo-text { width: 30%; }
@@ -244,23 +220,13 @@
       text-align: right;
     }
 
-    .photo-cover-btn {
-      border: none;
-      background: none;
-      padding: 0;
-      width: 36%;
+    .photo-book-col {
+      width: 55%;
       flex-shrink: 0;
-      cursor: pointer;
-      transition: transform 0.3s ease;
-    }
-
-    .photo-cover-btn:hover { transform: scale(1.025); }
-    .photo-cover-btn:focus-visible { outline: 3px solid var(--yellow); outline-offset: 4px; }
-
-    .photo-cover-btn img {
-      width: 100%;
-      height: auto;
-      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.2vw;
     }
 
     /* ── Image manipulation card ── */
@@ -359,7 +325,7 @@
     }
 
     /* ══════════════════════════════════════════
-       PHOTOGRAPHY FLIPBOOK MODAL (same as home page)
+       FLIPBOOK (inline) + MODAL SHELL (Instagram popup)
     ══════════════════════════════════════════ */
     .book-modal {
       position: fixed;
@@ -381,28 +347,7 @@
       pointer-events: auto;
     }
 
-    .book-board {
-      position: relative;
-      width: calc(100vw - 160px);
-      height: calc(100vh - 160px);
-      border-radius: 32px;
-      box-shadow: 0 40px 90px rgba(0, 0, 0, 0.55);
-      padding: 4vh 4vw 2.5vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2vh;
-      transform: scale(0.94);
-      transition: transform 0.3s ease;
-    }
-
-    .book-modal.open .book-board { transform: scale(1); }
-
-    .photo-board { background: url('photography/wood-texture-light.jpg') center / cover; }
-
     .book-wrap {
-      flex: 1;
-      min-height: 0;
       width: 100%;
       display: flex;
       align-items: center;
@@ -411,11 +356,15 @@
 
     .book {
       position: relative;
-      height: 100%;
-      max-width: 100%;
+      width: 100%;
       aspect-ratio: 1016 / 579;
       perspective: 2600px;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     }
+
+    /* keep the visible page centered when the book is closed */
+    .book.at-start { transform: translateX(-25%); }
+    .book.at-end   { transform: translateX(25%); }
 
     .page-slot {
       position: absolute;
@@ -768,7 +717,7 @@
         gap: 2rem;
         padding: 36px 24px;
       }
-      .photo-cover-btn { width: 72%; }
+      .photo-book-col { width: 100%; }
       .photo-text { width: 100%; }
       .photo-text p { text-align: left; }
       .manip-card { padding: 36px 0; }
@@ -778,11 +727,19 @@
       .manip-strip img { border-radius: 16px; }
       .credits-footer { padding-top: 48px; margin-top: 64px; }
       .project-rows a { padding: 26px 0 26px 6px; }
-      .book-board {
-        width: calc(100vw - 32px);
-        height: calc(100vh - 32px);
-        padding: 3vh 3vw 2.5vh;
-      }
+    }
+    /* Film-grain: behind all content, above the page background */
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background-image: var(--noise);
+    }
+
+    /* Noise texture on solid surfaces (never on creatives) */
+    .top-nav, .dark-card, .credits-footer {
+      background-image: var(--noise);
     }
   </style>
 </head>
@@ -864,9 +821,40 @@ While designing the team makes sure to keep the aesthetics in&nbsp;&nbsp;mind. H
       <h2>Photography</h2>
       <p>This section includes my photography projects, where I showcase the versatility and beauty of smart products in various themes. From the ruggedness of adventure to the sophistication of fashion, this project showcases the timeless appeal of the product through the camera lens. Each image captures the uniqueness and character of leather, showcasing product versatility.</p>
     </div>
-    <button class="photo-cover-btn" id="photoCoverBtn" aria-haspopup="dialog" aria-label="Open the Arista Vault photography book">
-      <img src="photography/front-page.svg" alt="Arista Vault Photography book cover" />
-    </button>
+    <div class="photo-book-col" id="photoBookCol">
+      <div class="book-wrap">
+        <div class="book at-start" id="photoBook">
+          <div class="page-slot slot-left">
+            <img class="page-img" alt="Photography left page" />
+            <div class="spine-shadow"></div>
+            <button class="flip-zone zone-left" aria-label="Previous page"></button>
+          </div>
+
+          <div class="page-slot slot-right">
+            <img class="page-img" alt="Photography right page" />
+            <div class="spine-shadow"></div>
+            <button class="flip-zone zone-right" aria-label="Next page"></button>
+          </div>
+
+          <div class="flipper" aria-hidden="true">
+            <div class="flip-face flip-front">
+              <img alt="" />
+              <div class="flip-shade"></div>
+            </div>
+            <div class="flip-face flip-back">
+              <img alt="" />
+              <div class="flip-shade"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-nav">
+        <button class="book-prev" aria-label="Previous page">&larr;</button>
+        <span class="menu-counter book-counter" aria-live="polite"></span>
+        <button class="book-next" aria-label="Next page">&rarr;</button>
+      </div>
+    </div>
   </section>
 
   <!-- ── IMAGE MANIPULATION ── -->
@@ -878,6 +866,8 @@ While designing the team makes sure to keep the aesthetics in&nbsp;&nbsp;mind. H
     <div class="manip-strip" id="manipStrip">
       <img src="arista-assets/manip-1.jpg" alt="Image manipulation — wallet peeled open revealing a circuit board" />
       <img src="arista-assets/manip-2.jpg" alt="Image manipulation — two-way separation alarm campaign visual" />
+      <img src="arista-assets/manip-3.jpg" alt="Image manipulation — smart connectivity feature showcase" />
+      <img src="arista-assets/manip-4.jpg" alt="Image manipulation — anti-theft feature demonstration" />
     </div>
   </section>
 
@@ -898,46 +888,6 @@ While designing the team makes sure to keep the aesthetics in&nbsp;&nbsp;mind. H
     </ul>
   </div>
 </footer>
-
-<!-- ── PHOTOGRAPHY FLIPBOOK MODAL (same as home page) ── -->
-<div class="book-modal photo-modal" id="photoModal" role="dialog" aria-modal="true" aria-label="Arista Vault photography book">
-  <div class="book-board photo-board">
-    <button class="menu-close book-close" aria-label="Close photography book">&#10005;</button>
-
-    <div class="book-wrap">
-      <div class="book">
-        <div class="page-slot slot-left">
-          <img class="page-img" alt="Photography left page" />
-          <div class="spine-shadow"></div>
-          <button class="flip-zone zone-left" aria-label="Previous page"></button>
-        </div>
-
-        <div class="page-slot slot-right">
-          <img class="page-img" alt="Photography right page" />
-          <div class="spine-shadow"></div>
-          <button class="flip-zone zone-right" aria-label="Next page"></button>
-        </div>
-
-        <div class="flipper" aria-hidden="true">
-          <div class="flip-face flip-front">
-            <img alt="" />
-            <div class="flip-shade"></div>
-          </div>
-          <div class="flip-face flip-back">
-            <img alt="" />
-            <div class="flip-shade"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="menu-nav">
-      <button class="book-prev" aria-label="Previous page">&larr;</button>
-      <span class="menu-counter book-counter" aria-live="polite"></span>
-      <button class="book-next" aria-label="Next page">&rarr;</button>
-    </div>
-  </div>
-</div>
 
 <!-- ── INSTAGRAM POPUP (social-card phone) ── -->
 <div class="book-modal insta-modal" id="instaModal" role="dialog" aria-modal="true" aria-label="aristavault Instagram profile preview">
@@ -964,17 +914,6 @@ While designing the team makes sure to keep the aesthetics in&nbsp;&nbsp;mind. H
 </div>
 
 <script>
-  /* ── Scroll reveal ── */
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add('visible');
-      revealObserver.unobserve(entry.target);
-    });
-  }, { threshold: 0.12 });
-
-  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-
   /* ── Image manipulation strip: drag to scroll ── */
   (function dragScroll() {
     const strip = document.getElementById('manipStrip');
@@ -1001,27 +940,41 @@ While designing the team makes sure to keep the aesthetics in&nbsp;&nbsp;mind. H
   })();
 
   /* ══════════════════════════════════════════
-     PHOTOGRAPHY FLIPBOOK (same as home page)
+     INLINE PHOTOGRAPHY FLIPBOOK (same pattern as oichi menu card)
   ══════════════════════════════════════════ */
-  function createFlipbook({ modal, trigger, faces }) {
-    const closeBtn  = modal.querySelector('.book-close');
-    const slotLeft  = modal.querySelector('.slot-left');
-    const slotRight = modal.querySelector('.slot-right');
+  const PHOTO_FACES = [
+    'front-page',
+    'second-left',   'second-right',
+    'third-left',    'third-right',
+    'fourth-left',   'fourth-right',
+    'fifth-left',    'fifth-right',
+    'sixth-left',    'sixth-right',
+    'seventh-left',  'seventh-right',
+    'eighth-left',   'eighth-right',
+    'nineth-left',   'nineth-right',
+    'tenth-left',    'tenth-right',
+    'eleventh-left', 'eleventh-right',
+  ].map(n => 'photography/' + n + '.svg');
+
+  (function createInlineFlipbook() {
+    const col       = document.getElementById('photoBookCol');
+    const book      = document.getElementById('photoBook');
+    const slotLeft  = col.querySelector('.slot-left');
+    const slotRight = col.querySelector('.slot-right');
     const leftImg   = slotLeft.querySelector('.page-img');
     const rightImg  = slotRight.querySelector('.page-img');
-    const flipper   = modal.querySelector('.flipper');
-    const flipFront = modal.querySelector('.flip-front img');
-    const flipBack  = modal.querySelector('.flip-back img');
-    const prevBtn   = modal.querySelector('.book-prev');
-    const nextBtn   = modal.querySelector('.book-next');
-    const counter   = modal.querySelector('.book-counter');
+    const flipper   = col.querySelector('.flipper');
+    const flipFront = col.querySelector('.flip-front img');
+    const flipBack  = col.querySelector('.flip-back img');
+    const prevBtn   = col.querySelector('.book-prev');
+    const nextBtn   = col.querySelector('.book-next');
+    const counter   = col.querySelector('.book-counter');
 
+    const faces     = PHOTO_FACES;
     const lastState = Math.floor(faces.length / 2);
 
-    let state     = 0;
-    let flipping  = false;
-    let isOpen    = false;
-    let preloaded = false;
+    let state    = 0;
+    let flipping = false;
 
     const leftFaceOf  = s => s === 0 ? null : faces[2 * s - 1];
     const rightFaceOf = s => faces[2 * s] || null;
@@ -1037,6 +990,8 @@ While designing the team makes sure to keep the aesthetics in&nbsp;&nbsp;mind. H
       counter.textContent = (state + 1) + ' / ' + (lastState + 1);
       prevBtn.disabled = state === 0;
       nextBtn.disabled = state === lastState;
+      book.classList.toggle('at-start', state === 0);
+      book.classList.toggle('at-end', state === lastState && !rightFaceOf(state));
     }
 
     function flip(dir) {
@@ -1067,66 +1022,14 @@ While designing the team makes sure to keep the aesthetics in&nbsp;&nbsp;mind. H
       render();
     });
 
-    function open() {
-      if (!preloaded) {
-        faces.forEach(src => { const im = new Image(); im.src = src; });
-        preloaded = true;
-      }
-      state = 0;
-      flipping = false;
-      flipper.classList.remove('flip-forward', 'flip-backward');
-      render();
-      modal.classList.add('open');
-      document.body.style.overflow = 'hidden';
-      isOpen = true;
-      closeBtn.focus();
-    }
-
-    function close() {
-      modal.classList.remove('open');
-      document.body.style.overflow = '';
-      isOpen = false;
-      trigger.focus();
-    }
-
-    trigger.addEventListener('click', open);
-    closeBtn.addEventListener('click', close);
-    modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
-
-    modal.querySelector('.zone-left').addEventListener('click', () => flip(-1));
-    modal.querySelector('.zone-right').addEventListener('click', () => flip(1));
+    col.querySelector('.zone-left').addEventListener('click', () => flip(-1));
+    col.querySelector('.zone-right').addEventListener('click', () => flip(1));
     prevBtn.addEventListener('click', () => flip(-1));
     nextBtn.addEventListener('click', () => flip(1));
 
-    window.addEventListener('keydown', (e) => {
-      if (!isOpen) return;
-      if (e.key === 'ArrowRight') { e.preventDefault(); flip(1); }
-      if (e.key === 'ArrowLeft')  { e.preventDefault(); flip(-1); }
-      if (e.key === 'Escape')     { e.preventDefault(); close(); }
-    });
-
-    return { open };
-  }
-
-  const PHOTO_FACES = [
-    'front-page',
-    'second-left',   'second-right',
-    'third-left',    'third-right',
-    'fourth-left',   'fourth-right',
-    'fifth-left',    'fifth-right',
-    'sixth-left',    'sixth-right',
-    'seventh-left',  'seventh-right',
-    'eighth-left',   'eighth-right',
-    'nineth-left',   'nineth-right',
-    'tenth-left',    'tenth-right',
-    'eleventh-left', 'eleventh-right',
-  ].map(n => 'photography/' + n + '.svg');
-
-  createFlipbook({
-    modal:   document.getElementById('photoModal'),
-    trigger: document.getElementById('photoCoverBtn'),
-    faces:   PHOTO_FACES,
-  });
+    faces.forEach(src => { const im = new Image(); im.src = src; });
+    render();
+  })();
 
   /* ══════════════════════════════════════════
      INSTAGRAM POPUP (social-card phone)

@@ -11,6 +11,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
+      --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.13'/%3E%3C/svg%3E");
       --blue:  #0060CE;
       --yellow:#FFEF28;
       --red:   #DB1921;
@@ -59,13 +60,6 @@
       text-decoration: none;
     }
 
-    .top-nav .btn-contact {
-      background: var(--blue);
-      color: #fff;
-      padding: 0.45rem 1.4rem;
-      border-radius: 999px;
-    }
-
     /* ══════════════════════════════════════════
        LAYOUT HELPERS
     ══════════════════════════════════════════ */
@@ -96,14 +90,6 @@
       line-height: 1.6;
       padding-top: 0.4em;
     }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(26px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
-    }
-
-    .reveal.visible { opacity: 1; transform: translateY(0); }
 
     /* ══════════════════════════════════════════
        HERO — lightbox photo card
@@ -473,6 +459,7 @@
     }
 
     .social-nav {
+      opacity: 0;
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
@@ -686,9 +673,24 @@
       .credits-footer { padding-top: 48px; margin-top: 64px; }
       .project-rows a { padding: 26px 0 26px 6px; }
     }
+    /* Film-grain: behind all content, above the page background */
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background-image: var(--noise);
+    }
+
+    /* Noise texture on solid surfaces (never on creatives) */
+    .top-nav, .menu-card, .credits-footer {
+      background-image: var(--noise);
+    }
   </style>
 </head>
 <body>
+
+<div class="grain" aria-hidden="true"></div>
 
 <!-- ── NAV ── -->
 <nav class="top-nav">
@@ -883,17 +885,6 @@
 </footer>
 
 <script>
-  /* ── Scroll reveal ── */
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add('visible');
-      revealObserver.unobserve(entry.target);
-    });
-  }, { threshold: 0.12 });
-
-  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-
   /* ══════════════════════════════════════════
      INLINE MENU FLIPBOOK (same book as home page)
   ══════════════════════════════════════════ */

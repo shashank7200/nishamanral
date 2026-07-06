@@ -283,10 +283,7 @@
       overflow: hidden;
     }
 
-    .rotate-word-inner {
-      height: 100%;
-      animation: wordRoll 3s infinite cubic-bezier(0.65, 0, 0.35, 1);
-    }
+    .rotate-word-inner { height: 100%; }
 
     .rotate-word-inner span {
       display: flex;
@@ -297,14 +294,6 @@
       font-size: 5.2cqw;
       color: #d6d6d6;
       white-space: nowrap;
-    }
-
-    @keyframes wordRoll {
-      0%, 20%   { transform: translateY(0); }
-      25%, 45%  { transform: translateY(-100%); }
-      50%, 70%  { transform: translateY(-200%); }
-      75%, 95%  { transform: translateY(-300%); }
-      100%      { transform: translateY(-400%); }
     }
 
     /* ══════════════════════════════════════════
@@ -544,7 +533,6 @@
       font-size: 0.95rem;
       line-height: 1.7;
       font-weight: 600;
-      font-family: Arial, sans-serif;
     }
 
     /* ══════════════════════════════════════════
@@ -1219,11 +1207,7 @@
     <img src="second-section.svg" alt="About Nisha" />
     <div class="rotate-word-wrap" aria-hidden="true">
       <div class="rotate-word-inner">
-        <span>Conceptualize</span>
-        <span>Illustrate</span>
-        <span>Direct</span>
-        <span>Visualise</span>
-        <span>Conceptualize</span>
+        <span id="rotateWord">Conceptualize</span>
       </div>
     </div>
     </div>
@@ -1521,6 +1505,14 @@
   function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
   function clamp(v,lo,hi) { return Math.max(lo, Math.min(hi, v)); }
   function prog(t,a,b) { return clamp((t-a)/(b-a), 0, 1); }
+
+  /* ── About: swap the rotating word in a simple loop ── */
+  (function rotateWord() {
+    const words = ['Conceptualize', 'Illustrate', 'Direct', 'Visualise'];
+    const el = document.getElementById('rotateWord');
+    let i = 0;
+    setInterval(() => { i = (i + 1) % words.length; el.textContent = words[i]; }, 500);
+  })();
 
   /* ── Hero animation (runs every frame while scrolling) ── */
   let ticking = false;

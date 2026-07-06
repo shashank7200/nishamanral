@@ -320,8 +320,10 @@
 
     .post-row {
       position: relative;
-      overflow: hidden;
+      padding: 0 56px; /* side gutters keep the nav arrows off the creatives */
     }
+
+    .post-clip { overflow: hidden; }
 
     .post-track {
       --post-gap: clamp(0.6rem, 1.2vw, 18px);
@@ -358,8 +360,8 @@
     }
 
     .post-nav:hover { background: rgba(90, 90, 90, 0.9); }
-    .post-prev { left: 12px; }
-    .post-next { right: 12px; }
+    .post-prev { left: 0; }
+    .post-next { right: 0; }
     .post-nav.hidden { opacity: 0; pointer-events: none; }
 
     /* ══════════════════════════════════════════
@@ -523,6 +525,7 @@
       .banner-lightbox img { max-width: calc(100vw - 24px); border-radius: 16px; }
       /* Post rows become swipe strips */
       .carousel-rows { margin-top: 40px; gap: 1.4rem; }
+      .post-row { padding: 0; }
       .post-nav { display: none; }
       .post-track {
         transform: none !important;
@@ -798,7 +801,11 @@
       next.setAttribute('aria-label', 'More posts');
       next.innerHTML = '&#8250;';
 
-      row.appendChild(track);
+      const clip = document.createElement('div');
+      clip.className = 'post-clip';
+      clip.appendChild(track);
+
+      row.appendChild(clip);
       row.appendChild(prev);
       row.appendChild(next);
       rowsBox.appendChild(row);

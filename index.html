@@ -21,7 +21,6 @@
     body {
       font-family: 'Inter', Arial, sans-serif;
       background: #fff;
-      overflow-x: hidden;
     }
 
     /* ══════════════════════════════════════════
@@ -201,7 +200,7 @@
     .yellow-accent {
       position: absolute;
       left: 54%;
-      top: 64%;
+      top: 70%;
       width: 21%;
       height: 15%;
       background: var(--yellow);
@@ -574,7 +573,7 @@
     .process-track {
       display: flex;
       align-items: center;
-      gap: 5vw;
+      gap: 15vw;
       padding: 0 4vw;
       will-change: transform;
     }
@@ -625,7 +624,7 @@
       display: grid;
       grid-template-columns: 1fr 2.6fr;
       gap: 3px;
-      min-height: calc(100vh - 120px);
+      min-height: calc(100vh - 100px);
     }
 
     .services-label {
@@ -704,7 +703,7 @@
     .services-row-sub li {
       font-size: 0.85rem;
       font-family: Arial, sans-serif;
-      padding: 0.55rem 0;
+      padding: 0.25rem 0;
       border-bottom: 1px solid rgba(255, 255, 255, 0.6);
       max-width: 26rem;
     }
@@ -1703,7 +1702,11 @@
         processScrollContainer.getBoundingClientRect().top + window.scrollY - 80 + i * viewH
       )
     ).concat([
-      Math.min(servicesSection.getBoundingClientRect().top + window.scrollY - 80, maxScroll),
+      Math.min(
+        // centre the services slide: equal space above and below
+        servicesSection.getBoundingClientRect().top + window.scrollY
+          - (viewH - servicesSection.offsetHeight) / 2,
+        maxScroll),
       Math.min(quoteSection.getBoundingClientRect().top + window.scrollY - 80, maxScroll),
       maxScroll, // Contact footer — bottom of page
     ]);

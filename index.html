@@ -6,12 +6,12 @@
   <title>Portfolio 2025</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.13'/%3E%3C/svg%3E");
+      --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.28'/%3E%3C/svg%3E");
       --blue: #0060CE;
       --yellow: #FFEF28;
       --card-radius: 30px;
@@ -250,50 +250,133 @@
     .service-card:hover { transform: translateY(-4px); background: #fff; }
 
     /* ══════════════════════════════════════════
-       SECTION 2 — ABOUT (second-section.svg)
+       SECTION 2 — ABOUT (native HTML/CSS)
     ══════════════════════════════════════════ */
     .about-section {
-      display: flex;
-      justify-content: center;
-      max-height: calc(100vh - 101px);
-      container-type: inline-size;
-    }
-
-    .about-inner {
-      position: relative;
-      width: fit-content;
-      margin: 0 auto;
-    }
-
-    .about-section img {
-      display: block;
-      max-width: 100%;
-      width: auto;
-      height: auto;
-    }
-
-    /* Rotating word — patches over the grey "Conceptualize" baked into the SVG */
-    .rotate-word-wrap {
-      position: absolute;
-      left: 6.1cqw;
-      top: 18%;
-      width: 42.2cqw;
-      height: 11.8%;
+      height: calc(100vh - 101px);
+      min-height: 620px;
       background: #fff;
+      border: 1.3px solid var(--blue);
+      border-radius: var(--card-radius);
       overflow: hidden;
+      padding: clamp(1.4rem, 3.2vh, 2.6rem) clamp(1.6rem, 3vw, 3rem);
     }
 
-    .rotate-word-inner { height: 100%; }
+    .about-grid {
+      height: 100%;
+      display: grid;
+      grid-template-columns: 53% 1fr;
+    }
 
-    .rotate-word-inner span {
+    .about-left,
+    .about-right {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .about-hi {
+      color: var(--blue);
+      font-weight: bolder;
+      font-size: clamp(4.5rem, 5.6vh + 2vw, 4rem);
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+    }
+
+    .about-rotate {
       display: flex;
       align-items: center;
-      height: 100%;
-      font-family: 'Inter', Arial, sans-serif;
-      font-weight: 700;
-      font-size: 5.2cqw;
+      gap: 0.35em;
+      font-weight: bolder;
+      font-size: clamp(4.5rem, 5.6vh + 2vw, 4rem);
       color: #d6d6d6;
+      line-height: 1.05;
       white-space: nowrap;
+    }
+
+    .rotate-bar {
+      width: 0.22em;
+      height: 0.78em;
+      background: var(--blue);
+      flex-shrink: 0;
+    }
+
+    /* ── Experience card (designed SVG export) ── */
+    .exp-card {
+      margin-top: auto;
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* ── About me box ── */
+    .aboutme-box { border: 1.5px solid var(--blue); }
+
+    .aboutme-head {
+      background: #fff;
+      color: var(--blue);
+      font-weight: 700;
+      font-size: clamp(1.15rem, 2.6vh, 1.7rem);
+      padding: 0.45em 0.9em;
+      border-bottom: 1.5px solid var(--blue);
+    }
+
+    .aboutme-box p {
+      background: var(--yellow);
+      color: var(--blue);
+      font-weight: 500;
+      font-size: clamp(0.72rem, 1.55vh, 0.95rem);
+      line-height: 1.5;
+      padding: clamp(0.8rem, 1.8vh, 1.3rem) clamp(0.9rem, 1.4vw, 1.4rem);
+      font-family: Arial, sans-serif;
+    }
+
+    /* ── Photo + skills ── */
+    .about-lower {
+      margin-top: auto;
+      display: grid;
+      grid-template-columns: 68% 1fr;
+      align-items: end;
+      min-height: 0;
+    }
+
+    .about-photo {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .skills-card {
+      background: var(--blue);
+      background-image: var(--noise);
+      color: #fff;
+      border-radius: 18px;
+      padding: clamp(0.9rem, 2vh, 1.5rem) clamp(0.9rem, 1.4vw, 1.5rem);
+    }
+
+    .skills-card h3 {
+      font-weight: 700;
+      font-size: clamp(1.2rem, 2.7vh, 1.8rem);
+      letter-spacing: 0.02em;
+      padding-bottom: 0.35em;
+      border-bottom: 2px solid #fff;
+      margin-bottom: 0.7em;
+    }
+
+    .skills-card h4 {
+      color: var(--yellow);
+      font-size: clamp(0.78rem, 1.65vh, 1rem);
+      font-weight: 700;
+      margin: 0.9em 0 0.3em;
+    }
+
+    .skills-card h4:first-of-type { margin-top: 0; }
+
+    .skills-card p {
+      font-size: clamp(0.62rem, 1.35vh, 0.82rem);
+      line-height: 1.5;
+      font-weight: 500;
+      font-family: Arial, sans-serif;
     }
 
     /* ══════════════════════════════════════════
@@ -1080,7 +1163,10 @@
       .page-wrap { padding: 16px 16px; }
       .hero { height: calc(100vh - 130px); }
       .work-section { height: auto; min-height: 0; display: block; }
-      .about-section, .about-section img { max-height: none; }
+      .about-section { height: auto; min-height: 0; }
+      .about-grid { grid-template-columns: 1fr; height: auto; gap: 1.4rem; }
+      .exp-card { margin-top: 1.4rem; }
+      .about-lower { margin-top: 1.4rem; grid-template-columns: 1fr; }
       .quote-section { height: auto; min-height: 70vh; }
       .char-wrap { width: 190px; margin-top: -70px; }
       .portfolio-word { width: 94%; top: 22%; }
@@ -1145,8 +1231,27 @@
     }
 
     /* Noise texture on solid surfaces (never on creatives) */
-    .top-nav, .hero, .work-banner, .work-body, .service-card, .services-label, .services-row, .quote-section, .contact-section {
+    .top-nav, .hero, .about-section, .work-banner, .work-body, .service-card, .services-label, .services-row, .quote-section, .contact-section, .aboutme-box p, .skills-card {
       background-image: var(--noise);
+    }
+
+    /* Grain jitter — discrete tile jumps, the classic film-grain flicker */
+    @media (prefers-reduced-motion: no-preference) {
+      .grain, .top-nav, .hero, .about-section, .work-banner, .work-body, .service-card, .services-label, .services-row, .quote-section, .contact-section, .aboutme-box p, .skills-card {
+        animation: grainShift 0.9s step-end infinite;
+      }
+    }
+
+    @keyframes grainShift {
+      0%    { background-position: 0 0; }
+      12.5% { background-position: -28px 16px; }
+      25%   { background-position: 20px -24px; }
+      37.5% { background-position: -14px -30px; }
+      50%   { background-position: 30px 10px; }
+      62.5% { background-position: -22px 26px; }
+      75%   { background-position: 12px -18px; }
+      87.5% { background-position: -30px -8px; }
+      100%  { background-position: 0 0; }
     }
   </style>
 </head>
@@ -1202,14 +1307,37 @@
   </div>
 
   <!-- ── ABOUT ── -->
-  <div class="card-shell about-section" id="aboutSection">
-    <div class="about-inner">
-    <img src="second-section.svg" alt="About Nisha" />
-    <div class="rotate-word-wrap" aria-hidden="true">
-      <div class="rotate-word-inner">
-        <span id="rotateWord">Conceptualize</span>
+  <div class="about-section" id="aboutSection">
+    <div class="about-grid">
+
+      <div class="about-left">
+        <h2 class="about-hi">Hi, I&rsquo;m Nisha.</h2>
+        <div class="about-rotate" aria-hidden="true">
+          <span class="rotate-bar"></span>
+          <span id="rotateWord">Conceptualize</span>
+        </div>
+
+        <img class="exp-card" src="exp-card.svg" alt="Experience timeline — Publicis Sapient, MaAvatar, Aakhya India, Arista Vault, Andaaz Fashion" />
       </div>
-    </div>
+
+      <div class="about-right">
+        <div class="aboutme-box">
+          <div class="aboutme-head">About me</div>
+          <p>Innovative Visual Designer with 5+ years of experience in branding, digital communication, and user-centered design. Proven track record of designing for high-impact clients including Government of India (G20, MSME, NSDC, Ministry of Commerce &amp; Industry), startups, and global fashion brands. Adept at leading design teams, delivering creative strategies, and enhancing brand identity through Visual Storytelling. Recognized for cross-functional collaboration, art direction, and design leadership that drive engagement and elevate brand presence.</p>
+        </div>
+
+        <div class="about-lower">
+          <img class="about-photo" src="about-photo.svg" alt="Nisha smiling, wearing a blue gingham shirt" />
+          <div class="skills-card">
+            <h3>SKILLS</h3>
+            <h4>Core Skills</h4>
+            <p>Branding &middot; Visual Design &middot; UX/UI &middot; Art Direction &middot; Illustration &middot; Infographics &middot; Social Media Design &middot; Photography &middot; Motion Briefing &middot; Game Asset Concepting &middot; NFT Graphics &middot; Adobe Photoshop &middot; Illustrator &middot; InDesign &middot; Figma &middot; Presentation Design</p>
+            <h4>Soft Skills</h4>
+            <p>Leadership &middot; Team Collaboration &middot; Client Communication &middot; Creative Problem-Solving</p>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 

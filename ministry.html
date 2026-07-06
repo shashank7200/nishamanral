@@ -11,7 +11,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.13'/%3E%3C/svg%3E");
+      --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.28'/%3E%3C/svg%3E");
       --blue:   #0060CE;
       --yellow: #FFEF28;
       --ink:    #1c1c1c;
@@ -378,6 +378,25 @@
     .top-nav, .calendar-grid-card, .credits-footer {
       background-image: var(--noise);
     }
+
+    /* Grain jitter — discrete tile jumps, the classic film-grain flicker */
+    @media (prefers-reduced-motion: no-preference) {
+      .grain, .top-nav, .calendar-grid-card, .credits-footer {
+        animation: grainShift 0.9s step-end infinite;
+      }
+    }
+
+    @keyframes grainShift {
+      0%    { background-position: 0 0; }
+      12.5% { background-position: -28px 16px; }
+      25%   { background-position: 20px -24px; }
+      37.5% { background-position: -14px -30px; }
+      50%   { background-position: 30px 10px; }
+      62.5% { background-position: -22px 26px; }
+      75%   { background-position: 12px -18px; }
+      87.5% { background-position: -30px -8px; }
+      100%  { background-position: 0 0; }
+    }
   </style>
 </head>
 <body>
@@ -461,8 +480,8 @@
       </div>
 
       <img class="reading-card reveal" src="mi-assets/reading.jpg" alt="Reading the VANIJYA newsletter at a desk" />
-      <img class="spread-img reveal" src="mi-assets/spread.jpg" alt="VANIJYA newsletter inner news spread" />
       <img class="covers3-img reveal" src="mi-assets/covers3.jpg" alt="VANIJYA Edition 2 cover, content page, and India-centric news page" />
+      <img class="spread-img reveal" src="mi-assets/spread.jpg" alt="VANIJYA newsletter inner news spread" />
     </section>
 
     <!-- ── BOOK ── -->

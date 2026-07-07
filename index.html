@@ -27,7 +27,8 @@
        TOP NAV — yellow bar, outside hero card
     ══════════════════════════════════════════ */
     .top-nav {
-      top: 0;
+      position: sticky;
+      top: 40px;
       z-index: 100;
       background: var(--yellow);
       display: flex;
@@ -36,6 +37,14 @@
       padding: 0.75rem 2.5rem;
       margin: 40px 80px 0 80px;
       border-radius: 16px;
+      transition: transform 0.35s ease, opacity 0.35s ease;
+    }
+
+    /* Hidden once the hero (section 1) hands off to About (section 2) */
+    .top-nav.nav-hidden {
+      transform: translateY(-140%);
+      opacity: 0;
+      pointer-events: none;
     }
 
     .top-nav .logo img {
@@ -56,6 +65,17 @@
       text-decoration: none;
       font-family: Arial, sans-serif;
     }
+
+    /* Contact — solid blue pill, jumps to Select Work */
+    .top-nav .nav-links a.btn-contact {
+      background: var(--blue);
+      color: #fff;
+      padding: 0.45rem 1.4rem;
+      border-radius: 999px;
+      transition: background 0.2s ease;
+    }
+
+    .top-nav .nav-links a.btn-contact:hover { background: #004ea3; }
 
     /* Sticky N indicator (right side) */
     .n-indicator {
@@ -170,7 +190,7 @@
 
     .char-wrap img {
       position: absolute;
-      top: 80px; left: 0;
+      top: 29px; left: 0;
       width: 100%;
       display: block;
       pointer-events: none;
@@ -179,12 +199,13 @@
 
     .char-img-1 { opacity: 1; position: relative; }
     .char-img-2 { opacity: 0; }
+    .char-wrap img.char-img-2 { top: 21px; }
 
     /* 2025 badge — left of the face, tucked behind the nose */
     .badge {
       position: absolute;
-      top: 27vh;
-      left: 0%;
+      top: 25vh;
+      left: -3%;
       background: var(--yellow);
       color: var(--blue);
       font-size: clamp(1rem, 1.5vw, 1.4rem);
@@ -200,7 +221,7 @@
     .yellow-accent {
       position: absolute;
       left: 54%;
-      top: 70%;
+      top: 65%;
       width: 21%;
       height: 15%;
       background: var(--yellow);
@@ -1266,7 +1287,7 @@
   <div class="nav-links">
     <a href="#aboutSection">About</a>
     <a href="./oichi.html">Work</a>
-    <a href="#" class="btn-contact">Contact</a>
+    <a href="#workSection" class="btn-contact">Contact</a>
   </div>
 </nav>
 
@@ -1614,6 +1635,7 @@
      SCROLL ANIMATION + SECTION SNAPPING
 ═══════════════════════════════════════════ -->
 <script>
+  const topNav        = document.querySelector('.top-nav');
   const bgYellow      = document.getElementById('bgYellow');
   const portfolioWord = document.getElementById('portfolioWord');
   const charImg1      = document.getElementById('charImg1');
@@ -1675,10 +1697,19 @@
     processTrack.style.transform = `translateX(${-p * maxShift}px)`;
   }
 
+  /* ── Top nav: visible through the pinned hero, hidden once About arrives ── */
+  function updateNav() {
+    // About stays below the fold for the whole pinned hero; it crosses up into
+    // view exactly as section 1 hands off to section 2 — hide the nav then.
+    const aboutTop = aboutSection.getBoundingClientRect().top;
+    topNav.classList.toggle('nav-hidden', aboutTop < window.innerHeight * 0.6);
+  }
+
   function updateSections() {
     ticking = false;
     updateHero();
     updateProcess();
+    updateNav();
   }
 
   window.addEventListener('scroll', () => {

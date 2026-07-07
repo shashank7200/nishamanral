@@ -57,6 +57,17 @@
       text-decoration: none;
     }
 
+    /* Contact — solid blue pill, jumps to Select Work */
+    .top-nav .nav-links a.btn-contact {
+      background: var(--blue);
+      color: #fff;
+      padding: 0.45rem 1.4rem;
+      border-radius: 999px;
+      transition: background 0.2s ease;
+    }
+
+    .top-nav .nav-links a.btn-contact:hover { background: #004ea3; }
+
     /* ══════════════════════════════════════════
        LAYOUT HELPERS
     ══════════════════════════════════════════ */
@@ -770,9 +781,9 @@
 <nav class="top-nav">
   <a class="logo" href="index.html"><img src="logo.svg" alt="Logo" /></a>
   <div class="nav-links">
-    <a href="index.html">About</a>
-    <a href="index.html#workSection">Work</a>
-    <a href="index.html#contactSection" class="btn-contact">Contact</a>
+    <a href="index.html#aboutSection">About</a>
+    <a href="./oichi.html">Work</a>
+    <a href="index.html#workSection" class="btn-contact">Contact</a>
   </div>
 </nav>
 

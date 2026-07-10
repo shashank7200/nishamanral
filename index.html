@@ -1330,23 +1330,18 @@
       .brand-frame { width: calc(100vw - 32px); }
       .brand-modal .social-carousel { aspect-ratio: auto; height: 100%; }
     }
-    /* Film-grain: behind all content, above the page background */
+    /* Film-grain: over ALL content (below modals) — noise everywhere, no exclusions */
     .grain {
       position: fixed;
       inset: 0;
-      z-index: -1;
+      z-index: 400;
       pointer-events: none;
-      background-image: var(--noise);
-    }
-
-    /* Noise texture on solid surfaces (never on creatives) */
-    .top-nav, .hero, .about-section, .work-banner, .work-body, .service-card, .services-label, .services-row, .quote-section, .contact-section, .aboutme-box p, .skills-card {
       background-image: var(--noise);
     }
 
     /* Grain jitter — discrete tile jumps, the classic film-grain flicker */
     @media (prefers-reduced-motion: no-preference) {
-      .grain, .top-nav, .hero, .about-section, .work-banner, .work-body, .service-card, .services-label, .services-row, .quote-section, .contact-section, .aboutme-box p, .skills-card {
+      .grain {
         animation: grainShift 0.9s step-end infinite;
       }
     }
@@ -1798,8 +1793,14 @@
     const scrollRange  = processScrollContainer.offsetHeight - viewH;
     const p = clamp((window.scrollY - containerTop) / scrollRange, 0, 1);
 
+    // Finish the horizontal travel before the scroll ends and hold on the final
+    // card for the tail — otherwise the last step is only fully framed at the very
+    // last pixel (p === 1) and reads as permanently cropped while scrolling.
+    const HOLD = 0.15;
+    const pEff = clamp(p / (1 - HOLD), 0, 1);
+
     const maxShift = Math.max(0, processTrack.scrollWidth - processSection.clientWidth);
-    processTrack.style.transform = `translateX(${-p * maxShift}px)`;
+    processTrack.style.transform = `translateX(${-pEff * maxShift}px)`;
   }
 
   /* ── Top nav: visible through the pinned hero, hidden once About arrives ── */

@@ -203,7 +203,11 @@
     .char-img-1 { opacity: 1; position: relative; }
     /*.char-img-2 { opacity: 0; }
     .char-wrap img.char-img-2 { top: 21px; }*/
-    .char-img-2 { opacity: 0; width: calc(100% * 406 / 416); }
+   /* .char-img-2 { opacity: 0; width: calc(100% * 406 / 416); }*/
+    .char-wrap img.char-img-2 {
+      opacity: 0;
+      aspect-ratio: 416 / 609;
+    }
 
     /* 2025 badge — left of the face, tucked behind the nose */
     .badge {
